@@ -19,5 +19,4 @@ python MachineClassifer_BiasMitigation.py
 the result is stored in the "Result" folder. With a threshold $\epsilon=0.005$, the attributes’ distance to origin along iterations of bias mitigation is shown in the figure below.
 
 
-<img src="Result\UCIAdult\distance2origin_0.005.png" alt="distance2origin_0.005" width="500px" />
-![Alt text](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/distance2origin_0.005.png)
+![](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/distance2origin_0.005.png)
