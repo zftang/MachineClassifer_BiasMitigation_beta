@@ -238,14 +238,16 @@ if weighted_bool:
         pass
     
 
-
+print('-----------------')
 counter = 0
 step_info_arr= ['Raw'] 
 no_info_arr = []
 
+
 while (epsilon_val > epsilon_threshold_val) and (counter<1000):
     counter+=1
-    print('counter: ',  counter, polynomial_i)
+    
+    print('Current Iter: ',  counter)
     
     if debug_mode:
         
@@ -260,7 +262,7 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
             
             str_tmp = ' re-bin: ' + '{' + str(d[attribute_modified].inverse_transform([df_c.index[-1]])[0])              + ',' +  str(d[attribute_modified].inverse_transform([df_c.index[0]])[0]) + '}'
             print(str_tmp)
-            step_info_arr.append(attribute_modified + ' Step' + str(counter-1)+ str_tmp)
+            step_info_arr.append(attribute_modified + ' Iter' + str(counter-1)+ str_tmp)
             
             if attribute_modified in bias_mitigation_dict.keys():
                 bias_mitigation_dict[attribute_modified].update({df_c.index[-1]:df_c.index[0]})
@@ -661,9 +663,10 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
     
     
     print(debug_mode)
+    print('Attribute Dropped: ',  set(no_info_arr))
     print('--------------------------')
-    print(set(no_info_arr))
-    
+
+
 step_val_full = step_val    
 
 
@@ -679,13 +682,13 @@ fig, ax = plt.subplots(nrows=1,
 
 
 for step_val in range(step_val_full-1):
-    print(step_val)
+    #print(step_val)
     df_tmp = pd.read_csv(ResultPath+'bias_concentration_matrix_step_'+str(step_val)+'.csv', index_col=0)
     df_dist2origin = (df_tmp**2).sum().apply(np.sqrt)
     df_dist2origin.plot(style='o-', ax=ax, alpha=0.3)
     
 step_val = step_val_full-1
-print(step_val)
+#print(step_val)
 df_tmp = pd.read_csv(ResultPath+'bias_concentration_matrix_step_'+str(step_val)+'.csv', index_col=0)
 df_dist2origin = (df_tmp**2).sum().apply(np.sqrt)
 df_dist2origin.plot(style='o-', ax=ax, alpha=0.3)    
