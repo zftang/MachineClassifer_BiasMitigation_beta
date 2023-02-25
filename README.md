@@ -8,7 +8,7 @@ Our code uses Python version 3.8.8 and relies on the packages listed in "require
 
 ## Demo
 
-The  [UCI Adult Dataset](https://archive.ics.uci.edu/ml/datasets/adult) is used in this demo code.
+The  [UCI Adult Dataset](https://archive.ics.uci.edu/ml/datasets/adult) is used in this demo code. The demo was run on a CPU AMD EPYC 7642, utilizing 32 parallel n_jobs in joblib. The execution time of the demo was 68 seconds.
 
 Run the code with the following command in python 3 with the package listed in the "requirements.txt":
 
