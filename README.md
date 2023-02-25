@@ -20,4 +20,25 @@ The results for the UCIAdult dataset can be found in the 'Result/UCIAdult' folde
 
 ![](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/distance2origin_0.005.png)
 
-The information regarding the bias mitigation steps is stored in the 'Result/UCIAdult/result_info_0.005.csv' file, where the suffix '0.005' denotes the threshold value of epsilon used for the analysis.
+During each step, the attribute with the greatest distance to origin is iteratively modified until its distance to origin is less than the threshold value of $\epsilon$. In this demo, the information regarding the bias mitigation steps is stored in the 'Result/UCIAdult/result_info_0.005.csv' file, where the suffix '0.005' denotes the threshold value of epsilon used for the analysis.
+
+```python
+Step 0:
+'Raw'
+Step 1:
+'relationship Iter1 re-bin: { Husband, Unmarried}'
+'relationship Iter2 re-bin: { Unmarried, Not-in-family}'
+'relationship Iter3 re-bin: { Not-in-family, Wife}' 
+Step 2:
+'marital status Iter4 re-bin: { Married-civ-spouse, Never-married}'
+'marital status Iter5 re-bin: { Never-married, Divorced}'
+Step 3:
+'relationship Iter6 re-bin: { Wife, Own-child}'
+Step 4:
+'hours per week Iter7 polynomial: 3.0'
+Step 5:
+'marital status Iter8 re-bin: { Divorced, Widowed}'
+Step 6:
+'occupation Iter9 re-bin: { Craft-repair, Adm-clerical}'
+
+```
