@@ -20,3 +20,4 @@ the result is stored in the "Result" folder. With a threshold $\epsilon=0.005$, 
 
 
 <img src="Result\UCIAdult\distance2origin_0.005.png" alt="distance2origin_0.005" width="500px" />
+![Alt text](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/distance2origin_0.005.png)
