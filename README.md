@@ -16,7 +16,7 @@ Run the code with the following command in python 3 with the package listed in t
 python MachineClassifer_BiasMitigation.py
 ```
 
-the result is stored in the "Result" folder. With a threshold $\epsilon=0.005$, the attributes’ distance to origin along iterations of bias mitigation is shown in the figure below.
+the result is stored in the "Result/UCIAdult" folder. With a threshold $\epsilon=0.005$, the attributes’ distance to origin along iterations of bias mitigation is shown in the figure below.
 
 
 ![](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/distance2origin_0.005.png)
