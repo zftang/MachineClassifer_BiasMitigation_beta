@@ -19,6 +19,8 @@ import os
 from joblib import Parallel, delayed
 from sklearn.cluster import KMeans
 
+from params import *
+
 
 
 def cal_min_max_normalization(df_input): 
@@ -136,13 +138,8 @@ def get_upper(val_input):
 
 
 
-DatasetName = 'UCIAdult'
 
-#---------------------------
-# max sub-distance order for the distance matrix, -1 represent full order
-h_order_val = -1       
 
-DataPath = 'Data/UCIAdult/adult.data.csv'
 
 ResultPath = 'Result/' + DatasetName + '/'
 try:
@@ -151,25 +148,11 @@ except:
     pass      
 
 
-data_attribute = [
-    'age', 'workclass', 'fnlwgt', 'education', 'education num',
-    'marital status', 'occupation', 'relationship', 'race', 'sex',
-    'capital gain', 'capital loss', 'hours per week', 'native country',
-    'income'
-]
 
-numerical_attribute = [
-    'age', 'fnlwgt', 'education num', 'capital gain', 'capital loss',
-    'hours per week'
-]
 
-categorical_attribute = [
-    'workclass', 'education', 'marital status', 'occupation', 'relationship',
-    'race', 'sex', 'native country', 'income'
-]
 
-label_Y = 'income'
-label_O = 'sex'
+
+
 
 
 #--------------------------
@@ -178,10 +161,7 @@ df_data = pd.read_csv(DataPath, header=None)
 df_data.columns = data_attribute
 
 
-# # Distance Matrix
 
-
-DatasetName, h_order_val
 
 #--------------------------
 print('label_Y is : '+label_Y)
@@ -217,18 +197,6 @@ polynomial_arr = np.array([ [i, 1/i] for i in range(3,2000,2)]).reshape(-1)
 
 
 
-epsilon_threshold_val_fix_bool = False
-epsilon_threshold_val_fix = np.nan
-
- 
-epsilon_threshold_val_fix_bool = True
-epsilon_threshold_val_fix = 0.005
-epsilon_threshold_val_fix
-
-
-
-
-weighted_bool = False
 
 
 if weighted_bool:
@@ -498,7 +466,7 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
             ii+=1
     #print(ii)
 
-    result_tmp = Parallel(n_jobs=32)(
+    result_tmp = Parallel(n_jobs=num_jobs)(
         delayed(cal_mat_val)(x_a, x_b)
         for x_a, x_b in x_ab_arr)
 
@@ -753,3 +721,133 @@ else:
     df_data_info
 
 
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+print('Generate the data for model training')
+
+if DatasetName == 'UCIAdult':
+    ProcessedDataPath = 'Data/UCIAdult/Processed/'
+    try:
+        os.mkdir(ProcessedDataPath)
+    except:
+        pass
+
+    for process_type in ['train','test']:
+        print(process_type)
+        #--------------------------
+        # read data
+        if process_type == 'train':
+            df_data = pd.read_csv('Data/UCIAdult/adult.data.csv', header=None)
+        elif process_type == 'test':
+            df_data = pd.read_csv('Data/UCIAdult/adult.test.csv', header=None)   
+
+
+
+        df_data.columns = data_attribute
+
+        #---
+        # encode the categorical attributes
+        le = LabelEncoder()
+        LabelEncoder_Cols = categorical_attribute
+
+        df = df_data[LabelEncoder_Cols].copy()
+        d = defaultdict(LabelEncoder)
+        encoded_series = df.apply(lambda x: d[x.name].fit_transform(x))
+
+        df_data_processed = pd.concat([df_data.drop(LabelEncoder_Cols,axis=1), encoded_series], axis=1)
+        df_data_processed_bk = df_data_processed.copy() 
+
+
+        if epsilon_threshold_val_fix_bool:
+            df_data_info = pd.read_csv(ResultPath+'result_info_'+str(epsilon_threshold_val_fix)+'.csv', index_col=0)
+        else:
+            df_data_info = pd.read_csv(ResultPath+'result_info.csv', index_col=0)
+            df_data_info       
+
+
+        #df_data_info = pd.read_csv(ResultPath+'result_info.csv', index_col=0)
+        #df_data_info
+
+        exec_str_tmp = df_data_info['BiasMitigation'].values[0]
+        exec_str = 'bias_mitigation_dict='+exec_str_tmp
+        exec(exec_str)
+        bias_mitigation_dict      
+
+
+
+
+
+
+
+
+
+        
+        #---------------------------------------
+        df_data_processed = df_data_processed_bk.copy() 
+
+        bias_mitigation_keys_arr = list(bias_mitigation_dict.keys())
+        for i_attribute in bias_mitigation_keys_arr:
+
+            dict_attribute = bias_mitigation_dict[i_attribute]
+
+            # numerical attribute: polynomial transformation  
+            if i_attribute in numerical_attribute:
+
+                if dict_attribute == 'inf':
+
+                    y_name = i_attribute 
+                    df_data_processed[y_name] = 1    
+
+                else:
+
+                    y_name = i_attribute
+                    #y_data = df_data_processed[y_name]**(dict_attribute)
+                    y_data = ((df_data_processed[y_name].abs())**(dict_attribute)) * (df_data_processed[y_name].apply(np.sign))
+                    df_data_processed[y_name] = y_data
+
+
+
+            # categorical attribute: re-binning transformation
+            elif i_attribute in categorical_attribute:
+                y_name = i_attribute
+                df_tmp = df_data_processed[y_name].copy() 
+                keys_arr = list(dict_attribute.keys())
+                for i_key in keys_arr:
+                    df_tmp[df_tmp==i_key] = dict_attribute[i_key]  
+                df_data_processed[y_name] = df_tmp
+            else:
+                raise Exception('Error attribute', i_attribute)
+
+
+
+        #---------------------------------------
+        file_name = 'df_data_'+ process_type + '_processed.csv'
+        df_tmp = df_data_processed.astype(np.float64).drop(columns=[label_O])
+        #print(df_tmp.shape)
+        df_tmp.to_csv(ProcessedDataPath + file_name)
+
+        file_name = 'df_data_'+ process_type + '_rmO.csv'
+        df_tmp = df_data_processed_bk.astype(np.float64).drop(columns=[label_O])
+        #print(df_tmp.shape)
+        df_tmp.to_csv(ProcessedDataPath + file_name)
+
+        file_name = 'df_data_'+ process_type + '_raw.csv'
+        df_tmp = df_data_processed_bk.astype(np.float64)
+        #print(df_tmp.shape)
+        df_tmp.to_csv(ProcessedDataPath + file_name)      
+        
+else:
+    raise Exception('Modified the read_data part for train/test if the Dataset is not the Default UCIAdult') 
+    
+    
+print('Finished')
