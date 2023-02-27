@@ -51,7 +51,7 @@ To train a machine learning model using the processed data files, 21 different c
 python Model_Catboost.py
 ```
 
-On a CPU AMD EPYC 7642 utilizing 32 threads, the execution time was 32 seconds. The results of the demonstration show the effectiveness of our method in mitigating bias in the UCIAdult dataset. The results are reproducible using the random seed set in the   [Model_Catboost.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Model_Catboost.py) file, and other seeds will produce similar results. 
+On a CPU AMD EPYC 7642 utilizing 32 threads, the execution time was 32 seconds. The results of the demonstration show the effectiveness of our method in mitigating bias in the UCI Adult data. The results are reproducible using the random seed set in the [Model_Catboost.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Model_Catboost.py) file, and other seeds will produce similar results. 
 
 ```
 ------------------------------------------------------
