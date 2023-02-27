@@ -45,10 +45,6 @@ Step 6:
 
 After running the code [MachineClassifer_BiasMitigation.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/MachineClassifer_BiasMitigation.py), processed data files will be generated and stored in the path "Data\UCIAdult\Processed". These data are divided into training and test sets. Three types of data are included: raw data (Raw), data with the gender attribute removed (Removal), and transformed data using our bias mitigation technique (Mitigation). These data can be used to train a machine learning model, and the test set can be used to calculate evaluation metrics such as accuracy.
 
-
-
-To train a machine learning model using the processed data files, 21 different classifiers are used in our paper, and we recoomend to use these models follow the instructrions on https://github.com/kathrinse/TabSurvey. For simplicity, we provide a demonstration of our method using the catboost model. The hyperparameters are optimized with the validation set using the Python library Optuna. To run the demonstration, please refer to the Model_Catboost.py file. Run the code with the following command in Python 3 with additional package catboost==1.0.6.
-
 To train a machine learning model using the processed data files, 21 different classifiers were used in our paper. These classifiers are detailed on https://github.com/kathrinse/TabSurvey, where you can find instructions on how to use them. For simplicity, here we provide a demonstration of our method using the 'catboost' model. The hyperparameters are optimized with the validation set using the Python library 'Optuna'. To run the demonstration, please refer to the [Model_Catboost.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Model_Catboost.py) file. Run the code with the following command in Python 3 with additional package 'catboost==1.0.6'.
 
 ```python
