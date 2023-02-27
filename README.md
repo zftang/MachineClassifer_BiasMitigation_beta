@@ -16,11 +16,11 @@ Run the code with the following command in python 3 with the package listed in t
 python MachineClassifer_BiasMitigation.py
 ```
 
-The results for the UCIAdult dataset can be found in the 'Result/UCIAdult' folder. Specifically, the figure below shows the attributes' distance to origin along iterations of bias mitigation, with a threshold value $\epsilon=0.005$. To reproduce the results or modify the parameters used, you can change the values in the params.py file. Please refer to the file for detailed explanations of each parameter.
+The results for the UCIAdult dataset can be found in the [Result/UCIAdult](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/tree/main/Result/UCIAdult) folder. Specifically, the figure below shows the attributes' distance to origin along iterations of bias mitigation, with a threshold value $\epsilon=0.005$. To reproduce the results or modify the parameters used, you can change the values in the params.py file. Please refer to the file for detailed explanations of each parameter.
 
 ![](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/distance2origin_0.005.png)
 
-During each step, the attribute with the greatest distance to origin is iteratively modified until its distance to origin is less than the threshold value of $\epsilon$. In this demo, the information regarding the bias mitigation steps is stored in the 'Result/UCIAdult/result_info_0.005.csv' file, where the suffix '0.005' denotes the threshold value of $\epsilon$ used for the analysis.
+During each step, the attribute with the greatest distance to origin is iteratively modified until its distance to origin is less than the threshold value of $\epsilon$. In this demo, the information regarding the bias mitigation steps is stored in the [result_info_0.005.csv](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/result_info_0.005.csv) file, where the suffix '0.005' denotes the threshold value of $\epsilon$ used for the analysis.
 
 ```python
 Step 0:
