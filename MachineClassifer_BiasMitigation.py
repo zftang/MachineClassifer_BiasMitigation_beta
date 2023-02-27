@@ -143,6 +143,10 @@ def get_upper(val_input):
 
 ResultPath = 'Result/' + DatasetName + '/'
 try:
+    os.mkdir('Result/')
+except:
+    pass     
+try:
     os.mkdir(ResultPath)
 except:
     pass      
@@ -215,7 +219,8 @@ no_info_arr = []
 while (epsilon_val > epsilon_threshold_val) and (counter<1000):
     counter+=1
     
-    print('Current Iter: ',  counter)
+    
+    print('Current Step=', step_val,  'and Iter=',  counter)
     
     if debug_mode:
         
@@ -225,7 +230,7 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
             df_2 = df_data_processed[[attribute_modified, label_O]][df_data_processed[label_O]==0].groupby(attribute_modified).count()
             df_c = (df_1/(df_1.sum()) - df_2/(df_2.sum())).fillna(0).sort_values(by=label_O)            
             
-            print('debug categorical_attribute: ',attribute_modified,  ' re-bin:',  {df_c.index[-1]:df_c.index[0]})
+            print('Bias mitigation for categorical_attribute: ',attribute_modified,  ' re-bin:',  {df_c.index[-1]:df_c.index[0]})
             
             
             str_tmp = ' re-bin: ' + '{' + str(d[attribute_modified].inverse_transform([df_c.index[-1]])[0])              + ',' +  str(d[attribute_modified].inverse_transform([df_c.index[0]])[0]) + '}'
@@ -247,14 +252,14 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
             df_tmp = ((df_tmp.abs())**(polynomial_val)) * (df_tmp.apply(np.sign))
 
             if df_tmp.abs().max() > np.finfo(np.float32).max:
-                print('debug numerical_attribute: ',attribute_modified,  '; polynomial:',  polynomial_arr[polynomial_i])
+                print('Bias mitigation for numerical_attribute: ',attribute_modified,  '; polynomial:',  polynomial_arr[polynomial_i])
                 bias_mitigation_dict[attribute_modified] = 'inf'
                 
                 str_tmp = ' polynomial: ' + 'inf'
                 print(str_tmp)            
                 step_info_arr.append(attribute_modified + ' Step' + str(counter-1)+ str_tmp)                    
             else:
-                print('debug numerical_attribute: ',attribute_modified,  '; polynomial:',  polynomial_arr[polynomial_i])
+                print('Bias mitigation for numerical_attribute: ',attribute_modified,  '; polynomial:',  polynomial_arr[polynomial_i])
                 bias_mitigation_dict[attribute_modified] = polynomial_arr[polynomial_i]
             
                 str_tmp = ' polynomial: ' + str(polynomial_arr[polynomial_i])
@@ -621,8 +626,11 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
     #print('###---')
     print('maximum distance to origin: ',  epsilon_val, '  threshold: ', epsilon_threshold_val)
     if epsilon_val < epsilon_threshold_val:
+        print('--------------------------')
         print('the maximum distance to origin is smaller than the threshold epsilon value')
         print('Bias Mitigation Progress: Finish')
+        
+        
         
     
     plt.cla() 
@@ -630,7 +638,7 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
     plt.close("all")
     
     
-    print(debug_mode)
+    #print(debug_mode)
     print('Attribute Dropped: ',  set(no_info_arr))
     print('--------------------------')
 
@@ -663,7 +671,7 @@ df_dist2origin.plot(style='o-', ax=ax, alpha=0.3)
 
 
 
-print('max distance=', epsilon_threshold_val,   np.max(df_dist2origin) )    
+#print('max distance=', epsilon_threshold_val,   np.max(df_dist2origin) )    
 max_distance = np.max(df_dist2origin)
 df_dist2origin.to_csv(ResultPath+'bias_concentration_matrix_epsilon_'+str(epsilon_threshold_val_fix)+'.csv')
     
@@ -731,6 +739,7 @@ else:
     
     
     
+
     
     
 print('Generate the data for model training')
@@ -829,19 +838,19 @@ if DatasetName == 'UCIAdult':
                 raise Exception('Error attribute', i_attribute)
 
 
-
+          
         #---------------------------------------
-        file_name = 'df_data_'+ process_type + '_processed.csv'
+        file_name = 'data_'+ process_type + '_Mitigation.csv'
         df_tmp = df_data_processed.astype(np.float64).drop(columns=[label_O])
         #print(df_tmp.shape)
         df_tmp.to_csv(ProcessedDataPath + file_name)
 
-        file_name = 'df_data_'+ process_type + '_rmO.csv'
+        file_name = 'data_'+ process_type + '_Removal.csv'
         df_tmp = df_data_processed_bk.astype(np.float64).drop(columns=[label_O])
         #print(df_tmp.shape)
         df_tmp.to_csv(ProcessedDataPath + file_name)
 
-        file_name = 'df_data_'+ process_type + '_raw.csv'
+        file_name = 'data_'+ process_type + '_Raw.csv'
         df_tmp = df_data_processed_bk.astype(np.float64)
         #print(df_tmp.shape)
         df_tmp.to_csv(ProcessedDataPath + file_name)      
