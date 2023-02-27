@@ -16,7 +16,7 @@ Run the code with the following command in python 3 with the package listed in t
 python MachineClassifer_BiasMitigation.py
 ```
 
-The results for the UCIAdult dataset can be found in the 'Result/UCIAdult' folder. Specifically, the figure below shows the attributes' distance to origin along iterations of bias mitigation, with a threshold value $\epsilon=0.005$.
+The results for the UCIAdult dataset can be found in the 'Result/UCIAdult' folder. Specifically, the figure below shows the attributes' distance to origin along iterations of bias mitigation, with a threshold value $\epsilon=0.005$. To reproduce the results or modify the parameters used, you can change the values in the params.py file. Please refer to the file for detailed explanations of each parameter.
 
 ![](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/distance2origin_0.005.png)
 
@@ -42,3 +42,29 @@ Step 6:
 'occupation Iter9 re-bin: { Craft-repair, Adm-clerical}'
 
 ```
+
+After running the code [MachineClassifer_BiasMitigation.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/MachineClassifer_BiasMitigation.py), processed data files will be generated and stored in the path "Data\UCIAdult\Processed". These data are divided into training and test sets. Three types of data are included: raw data (Raw), data with the gender attribute removed (Removal), and transformed data using our bias mitigation technique (Mitigation). These data can be used to train a machine learning model, and the test set can be used to calculate evaluation metrics such as accuracy.
+
+
+
+To train a machine learning model using the processed data files, 21 different classifiers are used in our paper, and we recoomend to use these models follow the instructrions on https://github.com/kathrinse/TabSurvey. For simplicity, we provide a demonstration of our method using the catboost model. The hyperparameters are optimized with the validation set using the Python library Optuna. To run the demonstration, please refer to the Model_Catboost.py file. Run the code with the following command in Python 3 with additional package catboost==1.0.6.
+
+To train a machine learning model using the processed data files, 21 different classifiers were used in our paper. These classifiers are detailed on https://github.com/kathrinse/TabSurvey, where you can find instructions on how to use them. For simplicity, here we provide a demonstration of our method using the 'catboost' model. The hyperparameters are optimized with the validation set using the Python library 'Optuna'. To run the demonstration, please refer to the [Model_Catboost.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Model_Catboost.py) file. Run the code with the following command in Python 3 with additional package 'catboost==1.0.6'.
+
+```python
+python Model_Catboost.py
+```
+
+On a CPU AMD EPYC 7642 utilizing 32 threads, the execution time was 32 seconds. The results of the demonstration show the effectiveness of our method in mitigating bias in the UCIAdult dataset. The results are reproducible using the random seed set in the  [MachineClassifer_BiasMitigation.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/MachineClassifer_BiasMitigation.py) file, and other seeds will produce similar results. 
+
+```
+------------------------------------------------------
+Summary of the result of Bias Mitigation
+Raw:
+ Accuracy=0.8698; Delta_SP=0.1686; Delta_EO=0.1358
+Removal:
+ Accuracy=0.8698; Delta_SP=0.1507; Delta_EO=0.0854
+Mitigation:
+ Accuracy=0.8454; Delta_SP=0.0916; Delta_EO=0.0349
+```
+
