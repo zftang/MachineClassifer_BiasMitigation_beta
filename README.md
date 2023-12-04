@@ -2,7 +2,6 @@
 
 Our code uses Python version 3.8.8 and relies on the packages listed in "requirements.txt". For reproducibility, we recommend using a virtual environment to manage your dependencies. If you have any questions about the code or the requirements, please feel free to open an issue or contact us directly.
 
-
 ## Demo
 
 The  [UCI Adult Dataset](https://archive.ics.uci.edu/ml/datasets/adult) is used in this demo code. The demo was run on a CPU AMD EPYC 7642, utilizing 32 parallel n_jobs in joblib. The execution time of the demo was 68 seconds.
@@ -60,8 +59,6 @@ Removal:
 Mitigation:
  Accuracy=0.8454; Delta_SP=0.0916; Delta_EO=0.0349
 ```
-
-
 
 ## Results
 
