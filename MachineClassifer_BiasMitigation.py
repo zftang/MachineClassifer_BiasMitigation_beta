@@ -22,7 +22,7 @@ from sklearn.cluster import KMeans
 from params import *
 
 
-
+# Min-Max Normalization
 def cal_min_max_normalization(df_input): 
     min_val = df_input.min()
     max_val = df_input.max()
@@ -34,6 +34,7 @@ def cal_min_max_normalization(df_input):
     else:
         return df_input
 
+#    
 def cal_S_numerical_and_categorical(X_input_full, y_input, numerical_attribute, categorical_attribute):
     #--------------------
     numerical_attribute_tmp = []
@@ -53,8 +54,6 @@ def cal_S_numerical_and_categorical(X_input_full, y_input, numerical_attribute, 
     X_pos = X_input[y_input==1]
     X_neg = X_input[y_input==0]
     
-    #X_pos_mean = np.mean(X_pos, axis=0)
-    #X_neg_mean = np.mean(X_neg, axis=0)
     X_pos_mean = np.nanmean(X_pos, axis=0)
     X_neg_mean = np.nanmean(X_neg, axis=0)    
     
@@ -214,6 +213,7 @@ print('-----------------')
 counter = 0
 step_info_arr= ['Raw'] 
 no_info_arr = []
+comb_label_arr = list(combinations(list(set(df_data_processed[label_O].values)), 2))
 
 
 while (epsilon_val > epsilon_threshold_val) and (counter<1000):
@@ -224,11 +224,23 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
     
     if debug_mode:
         
-        if attribute_modified in categorical_attribute:
+        if attribute_modified in categorical_attribute:            
             
-            df_1 = df_data_processed[[attribute_modified, label_O]][df_data_processed[label_O]==1].groupby(attribute_modified).count()
-            df_2 = df_data_processed[[attribute_modified, label_O]][df_data_processed[label_O]==0].groupby(attribute_modified).count()
-            df_c = (df_1/(df_1.sum()) - df_2/(df_2.sum())).fillna(0).sort_values(by=label_O)            
+            df_c = None
+            max_val = 0
+            for comb_label in comb_label_arr:
+                p_label, n_label = comb_label            
+                df_1 = df_data_processed[[attribute_modified, label_O]][df_data_processed[label_O]==p_label].groupby(attribute_modified).count()
+                df_2 = df_data_processed[[attribute_modified, label_O]][df_data_processed[label_O]==n_label].groupby(attribute_modified).count()
+                df_c_tmp = (df_1/(df_1.sum()) - df_2/(df_2.sum())).fillna(0).sort_values(by=label_O).copy()         
+
+                max_val_tmp = np.abs((df_c_tmp.max() + df_c_tmp.min()).values[0])
+
+                if max_val_tmp> max_val:
+                    max_val = max_val_tmp
+                    df_c = df_c_tmp.copy()              
+            
+            
             
             print('Bias mitigation for categorical_attribute: ',attribute_modified,  ' re-bin:',  {df_c.index[-1]:df_c.index[0]})
             
@@ -323,7 +335,6 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
             
     #-----------------------------------------------------------------------------------
     # Step1: Data Normalization
-    comb_label_arr = list(combinations(list(set(df_data_processed[label_O].values)), 2))
     df_S_full = pd.DataFrame()
     for comb_label in comb_label_arr:
 
@@ -487,7 +498,7 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
     # Max value for n_components
     max_range = 9
     for dim in range(1, max_range):
-        mds = MDS(n_components=dim, dissimilarity='precomputed', random_state=random_state_val, n_init=4, max_iter=10000, eps=1e-10)
+        mds = MDS(n_components=dim, dissimilarity='precomputed', random_state=random_state_val, n_init=4, max_iter=10000, eps=1e-10, normalized_stress=False)
         mds.fit(distance_matrix)
         stress.append(mds.stress_) 
 
@@ -509,7 +520,7 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
 
     random_state_val = 1
     dim = 2
-    mds = MDS(n_components=dim, dissimilarity='precomputed', random_state=random_state_val, n_init=4, max_iter=10000, eps=1e-10)
+    mds = MDS(n_components=dim, dissimilarity='precomputed', random_state=random_state_val, n_init=4, max_iter=10000, eps=1e-10, normalized_stress=False)
 
     # Apply MDS
     # pts = mds.fit(distance_matrix) 
@@ -548,9 +559,9 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
         kmeans.labels_
         
 
-        K0_mean_val = df_dist2origin[~np.bool8(kmeans.labels_)].mean()
+        K0_mean_val = df_dist2origin[~np.bool_(kmeans.labels_)].mean()
         # rm the origin
-        #K0_mean_val = np.mean(df_dist2origin[~np.bool8(kmeans.labels_)].values[:-1])
+        #K0_mean_val = np.mean(df_dist2origin[~np.bool_(kmeans.labels_)].values[:-1])
         
         dist_max = df_dist2origin.max()
         dist_rm_max_mean = np.mean(df_dist2origin.sort_values().values[:-1])
@@ -584,10 +595,11 @@ while (epsilon_val > epsilon_threshold_val) and (counter<1000):
 
     distance_matrix.to_csv(ResultPath+'distance_matrix_step_'+str(step_val)+'.csv')
     bias_concentration_matrix.to_csv(ResultPath+'bias_concentration_matrix_step_'+str(step_val)+'.csv')
-
+    
     
     #---------------------------------
-    epsilon_val = df_dist2origin.max() 
+    #epsilon_val = df_dist2origin.max() 
+    epsilon_val = df_dist2origin[~df_dist2origin.index.isin(no_info_arr)].max()
     
     if debug_mode != True:
         attribute_modified = df_dist2origin.sort_values().index[-1]
@@ -684,7 +696,7 @@ pd.Series(index=df_dist2origin.index, data=epsilon_threshold_val).plot(ax=ax, st
 
 df_tmp = pd.read_csv(ResultPath+'bias_concentration_matrix_step_'+str(0)+'.csv', index_col=0)
 df_dist2origin = (df_tmp**2).sum().apply(np.sqrt)
-df_dist2origin[~np.bool8(kmeans.labels_)] = np.nan
+df_dist2origin[~np.bool_(kmeans.labels_)] = np.nan
 df_dist2origin.plot(ax=ax, style='o', ms=0.1)
 
 tickslabel_arr = list(df_dist2origin.index)

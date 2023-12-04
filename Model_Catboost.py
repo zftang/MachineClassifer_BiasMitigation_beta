@@ -4,22 +4,27 @@ import random
 from sklearn import metrics
 from catboost import CatBoostClassifier
 
+# Setting random seeds for reproducibility
 seed_valid = 0
 seed_catboost = 0
 
+# Array to store different types of datasets (Raw, Removal, Mitigation)
 datatype_arr = ['Raw', 'Removal', 'Mitigation']
 result_summary_dict = {}
 
+# Iterating through each type of dataset
 for datatype in datatype_arr:
     print('-----------------------------------------------')
     print('Training Model for the data:', datatype)
     
+    # Defining labels and categorical attributes
     label_Y = 'income'
     label_O = 'sex'
     categorical_attribute = [
         'workclass', 'education', 'marital status', 'occupation', 'relationship',
         'race', 'native country'
     ]
+    # Setting CatBoost Classifier parameters
     cat_params = {
         'l2_leaf_reg': 0.7424788083358183,
         'learning_rate': 0.27533872636959533,
@@ -30,6 +35,8 @@ for datatype in datatype_arr:
         'random_seed': seed_catboost
     }
 
+    
+    # Loading and preprocessing data depending on the dataset type
     if datatype == 'Raw':
         categorical_attribute_ = categorical_attribute+[label_O]
 
@@ -48,12 +55,13 @@ for datatype in datatype_arr:
         df_data_test = pd.read_csv('Data/UCIAdult/Processed/data_test_'+datatype+'.csv', index_col=0)
         df_data_test[categorical_attribute] = df_data_test[categorical_attribute].astype('int')
 
-
+    # Initializing and training the CatBoost Classifier
     model = CatBoostClassifier(**cat_params)
 
     X = df_data.drop(columns=label_Y).copy()
     y = df_data[label_Y].copy()
 
+    # Splitting the data into training and validation sets
     data_index = [i for i in range(len(y))]
     random.seed(seed_valid)
     random.shuffle(data_index)  
@@ -66,6 +74,8 @@ for datatype in datatype_arr:
     X_train, X_valid = X.loc[train_index], X.loc[valid_index]
     y_train, y_valid = y.loc[train_index], y.loc[valid_index]
 
+    
+    # Fitting the model
     model.fit(X_train, y_train, eval_set=(X_valid, y_valid), verbose=10)
 
     
@@ -79,7 +89,7 @@ for datatype in datatype_arr:
     df_data_test_ = pd.read_csv('Data/UCIAdult/Processed/data_test_Raw.csv', index_col=0)
     O_val = df_data_test_[label_O].values
 
-
+    # Calculating accuracy and fairness metrics
     df_result = pd.DataFrame(index=range(len(y_true)))
     df_result['y_true'] = y_true
     df_result['y_pred'] = y_pred
