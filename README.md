@@ -16,7 +16,7 @@ The results for the UCIAdult dataset can be found in the [Result/UCIAdult](https
 
 ![](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/distance2origin_0.005.png)
 
-During each step, the attribute with the greatest distance to origin is iteratively modified until its distance to origin is less than the threshold value of $\epsilon$. In this demo, the information regarding the bias mitigation steps is stored in the [result_info_0.005.csv](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/result_info_0.005.csv) file, where the suffix '0.005' denotes the threshold value of $\epsilon$ used for the analysis.
+During each step, the attribute with the greatest distance to origin is iteratively modified until its distance to origin is less than the threshold value of $\epsilon$. In this demo, the information regarding the bias mitigation steps is stored in the [result_info_0.005.csv](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/result_info_0.005.csv) file, where the suffix `0.005` denotes the threshold value of $\epsilon$ used for the analysis.
 
 ```python
 Step 0:
@@ -41,7 +41,7 @@ Step 6:
 
 After running the code [MachineClassifer_BiasMitigation.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/MachineClassifer_BiasMitigation.py), processed data files will be generated and stored in the path "Data\UCIAdult\Processed". These data are divided into training and test sets. Three types of data are included: raw data (Raw), data with the gender attribute removed (Removal), and transformed data using our bias mitigation technique (Mitigation). These data can be used to train a machine learning model, and the test set can be used to calculate evaluation metrics such as accuracy.
 
-To train a machine learning model using the processed data files, 21 different classifiers were used in our paper. These classifiers are detailed on https://github.com/kathrinse/TabSurvey, where you can find instructions on how to use them. For simplicity, here we provide a demonstration of our method using the 'catboost' model. The hyperparameters are optimized with the validation set using the Python library `Optuna`. To run the demonstration, please refer to the [Model_Catboost.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Model_Catboost.py) file. Run the code with the following command in Python 3 with additional package 'catboost==1.0.6'.
+To train a machine learning model using the processed data files, 21 different classifiers were used in our paper. These classifiers are detailed on https://github.com/kathrinse/TabSurvey, where you can find instructions on how to use them. For simplicity, here we provide a demonstration of our method using the `catboost` model. The hyperparameters are optimized with the validation set using the Python library `Optuna`. To run the demonstration, please refer to the [Model_Catboost.py](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Model_Catboost.py) file. Run the code with the following command in Python 3 with additional package `catboost==1.0.6`.
 
 ```python
 python Model_Catboost.py
@@ -67,10 +67,3 @@ In the demo above, we used a threshold value of $\epsilon=0.005$. In our paper, 
 ![](https://github.com/zftang/MachineClassifer_BiasMitigation_beta/blob/main/Result/UCIAdult/Figure3.png)
 
 **Exploiting the fairness-utility tradeoff at the UCI Adult data through greedily applying data transforms**. Left: Step-wise suppression of bias-prone attributes' bias concentration (measured via their distance to origin in the bias hyperspace) through polynomial/re-binning data transforms (dashed/solid circles) or attribute dropping (no circle), along the decrease of bias tolerance $\epsilon$ (dark to light colors). Right: Evolution of the trade-off between classification accuracy and fairness deficit $\Delta_{\mathrm{comb}}$, the latter captured by attributes' maximum bias concentration $d_{\emptyset}^{\text{max}}$ (x-y plane), shown in the 3-D space. Projections onto each plane displayed in light colors.
-
-
-
-
-
-
-
